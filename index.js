@@ -29,7 +29,7 @@ res.send('Welcome to user webservice')
 })
 
 
-app.get('/Users',async(req,res) => {
+app.get('/users',async(req,res) => {
     const Users = await UserModel.find({})
     if(Users){
         res.status(200).json({
@@ -43,15 +43,15 @@ app.get('/Users',async(req,res) => {
         })
     }
 })
-
-app.get('/Users',async(req,res) =>{
-    const id = {_id:req.params.id}
-    const Users = await UserModel.findOne(id)
-    if (Users){
+ // fetching a user by id
+app.get('/users/:id',async(req,res) =>{
+    const {id} = req.params
+    const User = await UserModel.findById(id)
+    if (User){
         res.status(200).json({
             message: 'User found',
-            User: Users
-        })
+            User: User
+        }) 
     }
     else{
         res.status(404).json({
@@ -61,8 +61,11 @@ app.get('/Users',async(req,res) =>{
 })
 
 app.post('/user', async(req,res) =>{
-    const {username, email,pasword} = req.body
-    const newUser = await UserModel.create({username,email,pasword,})
+    const {username, email,password} = req.body
+    const newUser = await UserModel.create({
+        username
+        ,email 
+        ,password,})
     if (newUser){
         res.status(200).json({
             message: 'user created',
@@ -75,6 +78,46 @@ app.post('/user', async(req,res) =>{
         })
     }
 
+})
+
+// update user
+app.patch('/user/:id', async(req,res) =>{
+    const {id} = req.params
+    const {username, email} = req.body
+
+    const updateUser = await UserModel.updateOne({
+        username,
+        email
+    }).where({id})
+
+    if (updateUser){
+        res.status(200).json({
+            message: 'user updated',
+            user:updateUser
+        })
+    }
+    else{
+        res.status(404).json({
+            message:'unable to update user'
+        })
+    }
+
+})
+app.delete('/users/:id',async(req,res) =>{
+    const {id} = req.params
+    const deleteUser = await UserModel.findByIdAndDelete(id)
+
+    if (deleteUser){
+        res.status(200).json({
+            message: 'user deleted',
+            user:deleteUser
+        })
+    }
+    else{
+        res.status(404).json({
+            message:'unable to delete user'
+        })
+    }
 })
 
 
