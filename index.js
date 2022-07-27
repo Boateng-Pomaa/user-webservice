@@ -44,9 +44,38 @@ app.get('/Users',async(req,res) => {
     }
 })
 
+app.get('/Users',async(req,res) =>{
+    const id = {_id:req.params.id}
+    const Users = await UserModel.findOne(id)
+    if (Users){
+        res.status(200).json({
+            message: 'User found',
+            User: Users
+        })
+    }
+    else{
+        res.status(404).json({
+            message:'User not found'
+        })
+    }
+})
 
+app.post('/user', async(req,res) =>{
+    const {username, email,pasword} = req.body
+    const newUser = await UserModel.create({username,email,pasword,})
+    if (newUser){
+        res.status(200).json({
+            message: 'user created',
+            user:newUser
+        })
+    }
+    else{
+        res.status(404).json({
+            message:'unable to create user'
+        })
+    }
 
-
+})
 
 
 
